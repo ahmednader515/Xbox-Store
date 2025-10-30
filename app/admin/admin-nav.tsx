@@ -15,16 +15,18 @@ import {
   X,
   LogOut,
   Ticket,
+  HelpCircle,
 } from 'lucide-react'
 import { SignOut } from '@/lib/actions/user.actions'
 
 const allNavigation = [
   { name: 'نظرة عامة', href: '/admin/overview', icon: BarChart3, roles: ['Admin'] },
   { name: 'المنتجات', href: '/admin/products', icon: Package, roles: ['Admin', 'Moderator'] },
-  { name: 'الطلبات', href: '/admin/orders', icon: ShoppingCart, roles: ['Admin', 'Moderator'] },
+  { name: 'الطلبات', href: '/admin/orders', icon: ShoppingCart, roles: ['Admin'] },
   { name: 'المستخدمون', href: '/admin/users', icon: Users, roles: ['Admin'] },
   { name: 'أكواد الخصم', href: '/admin/promo-codes', icon: Ticket, roles: ['Admin'] },
   { name: 'صفحات الويب', href: '/admin/web-pages', icon: FileText, roles: ['Admin', 'Moderator'] },
+  { name: 'الأسئلة الشائعة', href: '/admin/faq', icon: HelpCircle, roles: ['Admin', 'Moderator'] },
   { name: 'الإعدادات', href: '/admin/settings', icon: Settings, roles: ['Admin', 'Moderator'] },
 ]
 

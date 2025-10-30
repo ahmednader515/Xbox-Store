@@ -83,7 +83,7 @@ export default function OrderDetailsForm({
               </div>
             )}
 
-            {!isPaid && (paymentMethod === 'فودافون كاش' || paymentMethod === 'إنستا باي') && (
+            {!isPaid && paymentMethod && (
               <div className='space-y-3 pt-3 border-t'>
                 <div className='bg-yellow-900/30 border border-yellow-600 rounded-lg p-3 text-sm'>
                   <p className='text-yellow-400 font-semibold mb-1'>⏳ في انتظار تأكيد الدفع</p>
@@ -97,12 +97,6 @@ export default function OrderDetailsForm({
                 >
                   عرض تفاصيل الطلب
                 </Button>
-              </div>
-            )}
-
-            {!isPaid && paymentMethod !== 'فودافون كاش' && paymentMethod !== 'إنستا باي' && (
-              <div className='text-red-500 text-center p-2 text-sm'>
-                طريقة دفع غير معروفة: {paymentMethod}
               </div>
             )}
           </div>

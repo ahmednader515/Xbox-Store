@@ -34,6 +34,7 @@ export const ProductInputSchema = z.object({
   images: z.array(z.string()).min(1, 'Product must have at least one image'),
   brand: z.string().min(1, 'Brand is required'),
   description: z.string().min(1, 'Description is required'),
+  productType: z.enum(['game_account', 'subscription', 'game_code']).default('game_code'),
   isPublished: z.boolean(),
   price: Price('Price'),
   listPrice: Price('List price'),
@@ -85,6 +86,10 @@ export const OrderItemSchema = z.object({
   price: Price('Price'),
   size: z.string().optional(),
   color: z.string().optional(),
+  productType: z.enum(['game_account', 'subscription', 'game_code']).optional(),
+  isAddToOwnAccount: z.boolean().optional(),
+  accountUsername: z.string().optional(),
+  accountPassword: z.string().optional(),
 })
 export const ShippingAddressSchema = z.object({
   street: z.string().min(1, 'العنوان (الشارع، الشقة، الجناح، الوحدة، إلخ) مطلوب'),

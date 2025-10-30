@@ -27,10 +27,34 @@ const ProductCard = ({
   hideBorder?: boolean;
   hideAddToCart?: boolean;
 }) => {
+  // Helper function to get product type label
+  const getProductTypeLabel = (productType: string = 'game_code') => {
+    const typeMap: { [key: string]: string } = {
+      'game_code': 'كود اللعبة',
+      'game_account': 'حساب اللعبة',
+      'subscription': 'اشتراك',
+    };
+    return typeMap[productType] || 'كود اللعبة';
+  };
+
+  const getProductTypeColor = (productType: string = 'game_code') => {
+    const colorMap: { [key: string]: string } = {
+      'game_code': 'bg-blue-600',
+      'game_account': 'bg-purple-600',
+      'subscription': 'bg-green-600',
+    };
+    return colorMap[productType] || 'bg-blue-600';
+  };
+
   const ProductImage = () => (
     <div className="relative group">
       <Link href={`/product/${product.slug}`}>
         <div className="relative h-48 sm:h-56 md:h-64 w-full overflow-hidden rounded-lg bg-gray-800">
+          {/* Product Type Banner */}
+          <div className={`absolute top-2 right-2 ${getProductTypeColor(product.productType || 'game_code')} text-white text-center py-0.5 px-2 z-10 text-[10px] sm:text-xs font-semibold rounded`}>
+            {getProductTypeLabel(product.productType || 'game_code')}
+          </div>
+          
           {product.images && product.images.length > 0 && product.images[0] ? (
             product.images.length > 1 ? (
               <ImageHover
@@ -138,6 +162,11 @@ const ProductCard = ({
             color: product.colors[0] || '',
             size: product.sizes[0] || '',
             quantity: 1,
+            // product type & game account fields
+            productType: (product as any).productType || 'game_code',
+            isAddToOwnAccount: false,
+            accountUsername: undefined,
+            accountPassword: undefined,
             clientId: `${product.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           }, 1);
 

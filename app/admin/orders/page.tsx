@@ -16,8 +16,8 @@ export default async function OrdersPage(props: {
   const session = await auth()
   const userRole = session?.user.role
   
-  // Allow both Admin and Moderator
-  if (userRole !== 'Admin' && userRole !== 'Moderator') {
+  // Only Admin can access orders
+  if (userRole !== 'Admin') {
     redirect('/')
   }
 

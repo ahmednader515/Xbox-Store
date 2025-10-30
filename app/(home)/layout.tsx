@@ -12,7 +12,6 @@ export default async function HomeLayout({
       <Header />
       <main className='flex-1 flex flex-col'>{children}</main>
       <Footer />
-      <WhatsAppButton phoneNumber="+201014535302" />
     </div>
   )
 }

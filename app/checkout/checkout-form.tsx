@@ -12,6 +12,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Checkbox } from '@/components/ui/checkbox'
 
 import { useToast } from '@/hooks/use-toast'
 import { createOrder } from '@/lib/actions/order.actions'
@@ -50,14 +51,30 @@ type PaymentDetailsFormData = z.infer<typeof PaymentDetailsSchema>
 // Payment method details
 const PAYMENT_INFO = {
   'فودافون كاش': {
-    number: '01234567890',
+    number: '01277910038',
     label: 'رقم فودافون كاش',
     icon: '📱',
   },
   'إنستا باي': {
-    number: 'test@instapay',
+    number: 'mina.shk',
     label: 'اسم المستخدم إنستا باي',
     icon: '💳',
+    userName: 'mina.shk@instapay',
+    link: 'https://ipn.eg/S/mina.shk/instapay/2nU1nh',
+  },
+  'تيلدا': {
+    number: '@minahakim3',
+    label: 'اسم المستخدم تيلدا',
+    icon: '🟢',
+    instagram: '@minahakim3',
+  },
+  'حساب بنكي': {
+    number: '5110333000001242',
+    label: 'رقم الحساب البنكي',
+    icon: '🏦',
+    accountHolder: 'مينا سمير حكيم',
+    iban: 'EG060002051105110333000001242',
+    swift: 'BMISEGCXXXX',
   },
 }
 
@@ -70,6 +87,7 @@ export default function CheckoutForm() {
   const {
     cart: {
       itemsPrice,
+      items,
       shippingPrice,
       taxPrice,
       totalPrice,
@@ -128,7 +146,13 @@ export default function CheckoutForm() {
   const [isEmailSelected, setIsEmailSelected] = useState<boolean>(!!customerEmail)
   const [isPaymentMethodSelected, setIsPaymentMethodSelected] = useState<boolean>(false)
   const [isPaymentDetailsSelected, setIsPaymentDetailsSelected] = useState<boolean>(false)
+  const [isTermsAccepted, setIsTermsAccepted] = useState<boolean>(false)
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string>(transactionImage || '')
+  const [termsAccepted, setTermsAccepted] = useState<boolean>(false)
+  const hasGameAccountItem = Array.isArray(items) && items.some((it: any) => it.productType === 'game_account')
+  const [gameAccountOption, setGameAccountOption] = useState<'own' | 'new'>('new')
+  const [accountUsername, setAccountUsername] = useState('')
+  const [accountPassword, setAccountPassword] = useState('')
   
   // Promo code state
   const [appliedPromo, setAppliedPromo] = useState<{code: string, discountPercent: number} | null>(null)
@@ -154,14 +178,35 @@ export default function CheckoutForm() {
       return
     }
 
+    if (!termsAccepted) {
+      toast({
+        description: 'يرجى الموافقة على الشروط والأحكام',
+        variant: 'destructive',
+      })
+      return
+    }
+
     await withLoading(
       async () => {
         // Ensure all items have valid clientIds before placing order
         regenerateClientIds()
         
         // Get the current cart state and add promo code info
+        const updatedItems = (useCartStore.getState().cart.items || []).map((it: any) => {
+          if (it.productType === 'game_account') {
+            return {
+              ...it,
+              isAddToOwnAccount: gameAccountOption === 'own',
+              accountUsername: gameAccountOption === 'own' ? accountUsername : undefined,
+              accountPassword: gameAccountOption === 'own' ? accountPassword : undefined,
+            }
+          }
+          return it
+        })
+
         const currentCart = {
           ...useCartStore.getState().cart,
+          items: updatedItems,
           customerEmail,
           paymentNumber,
           transactionImage,
@@ -200,6 +245,17 @@ export default function CheckoutForm() {
     paymentDetailsForm.handleSubmit(onSubmitPaymentDetails)()
   }
 
+  const handleAcceptTerms = () => {
+    if (!termsAccepted) {
+      toast({
+        description: 'يرجى الموافقة على الشروط والأحكام',
+        variant: 'destructive',
+      })
+      return
+    }
+    setIsTermsAccepted(true)
+  }
+
   const CheckoutSummary = memo(() => (
     <Card>
       <CardContent className='p-3 sm:p-4'>
@@ -207,7 +263,7 @@ export default function CheckoutForm() {
           <div className='border-b mb-3 sm:mb-4'>
             <Button
               className='rounded-full w-full btn-mobile'
-              onClick={handleSelectEmail}
+              onClick={handleSelectContactInfo}
             >
               التالي
             </Button>
@@ -242,7 +298,7 @@ export default function CheckoutForm() {
             </p>
           </div>
         )}
-        {isPaymentDetailsSelected && isPaymentMethodSelected && isEmailSelected && (
+        {isPaymentDetailsSelected && isTermsAccepted && isPaymentMethodSelected && isEmailSelected && (
           <div>
             <Button 
               onClick={handlePlaceOrder} 
@@ -329,6 +385,62 @@ export default function CheckoutForm() {
                   <span className='w-6 sm:w-8'>1 </span>
                   <span>أدخل معلومات التواصل</span>
                 </div>
+                
+                {/* Game Account Options */}
+                {hasGameAccountItem && (
+                  <Card className='lg:mr-8 my-3 sm:my-4'>
+                    <CardContent className='p-3 sm:p-4 space-y-3 sm:space-y-4'>
+                      <div className='text-base sm:text-lg font-bold mb-2'>خيارات حساب اللعبة</div>
+                      <div className='space-y-2'>
+                        <label className='flex items-center gap-2 text-sm sm:text-base'>
+                          <input
+                            type='radio'
+                            name='gameAccountOption'
+                            checked={gameAccountOption === 'new'}
+                            onChange={() => setGameAccountOption('new')}
+                          />
+                          الحصول على حساب جديد للعبة (لا حاجة لبيانات حسابك)
+                        </label>
+                        <label className='flex items-center gap-2 text-sm sm:text-base'>
+                          <input
+                            type='radio'
+                            name='gameAccountOption'
+                            checked={gameAccountOption === 'own'}
+                            onChange={() => setGameAccountOption('own')}
+                          />
+                          إضافة اللعبة إلى حسابي الخاص
+                        </label>
+                      </div>
+                      {gameAccountOption === 'own' && (
+                        <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-3'>
+                          <div>
+                            <Label className='text-white text-sm sm:text-base'>اسم المستخدم للحساب</Label>
+                            <Input
+                              value={accountUsername}
+                              onChange={(e) => setAccountUsername(e.target.value)}
+                              placeholder='أدخل اسم المستخدم'
+                              className='border-gray-700 bg-gray-800 text-gray-200'
+                            />
+                          </div>
+                          <div>
+                            <Label className='text-white text-sm sm:text-base'>كلمة المرور للحساب</Label>
+                            <Input
+                              type='password'
+                              value={accountPassword}
+                              onChange={(e) => setAccountPassword(e.target.value)}
+                              placeholder='أدخل كلمة المرور'
+                              className='border-gray-700 bg-gray-800 text-gray-200'
+                            />
+                          </div>
+                          <p className='col-span-1 sm:col-span-2 text-xs text-gray-400'>
+                            ملاحظة: سيتم استخدام هذه البيانات فقط لإضافة اللعبة إلى حسابك ثم يتم حذفها فوراً بعد الإتمام.
+                          </p>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                )}
+                
                 <Form {...contactInfoForm}>
                   <form
                     method='post'
@@ -515,20 +627,80 @@ export default function CheckoutForm() {
                         {/* Payment Info Display */}
                         {currentPaymentInfo && (
                           <div className='bg-gray-800 border border-gray-700 rounded-lg p-4'>
-                            <div className='text-lg font-bold mb-2 flex items-center gap-2'>
+                            <div className='text-lg font-bold mb-3 flex items-center gap-2'>
                               <span>{currentPaymentInfo.icon}</span>
                               <span>معلومات الدفع</span>
                             </div>
-                            <div className='text-sm sm:text-base'>
-                              <p className='mb-1'>
-                                {currentPaymentInfo.label}:
-                              </p>
-                              <p className='text-green-400 font-bold text-lg'>
-                                {currentPaymentInfo.number}
-                              </p>
-                              <p className='text-xs text-gray-400 mt-2'>
-                                قم بتحويل المبلغ إلى الرقم أعلاه، ثم أدخل رقمك وارفع صورة المعاملة
-                              </p>
+                            <div className='text-sm sm:text-base space-y-2'>
+                              {currentPaymentInfo.userName && (
+                                <div>
+                                  <p className='mb-1 text-gray-300'>
+                                    اسم المستخدم:
+                                  </p>
+                                  <p className='text-green-400 font-bold text-lg'>
+                                    {currentPaymentInfo.userName}
+                                  </p>
+                                </div>
+                              )}
+                              <div>
+                                <p className='mb-1 text-gray-300'>
+                                  {currentPaymentInfo.label}:
+                                </p>
+                                <p className='text-green-400 font-bold text-lg'>
+                                  {currentPaymentInfo.number}
+                                </p>
+                              </div>
+                              
+                              {/* InstaPay Link */}
+                              {currentPaymentInfo.link && (
+                                <div className='mt-3'>
+                                  <a
+                                    href={currentPaymentInfo.link}
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    className='inline-flex items-center justify-center w-full px-4 py-3 bg-primary hover:bg-primary/90 text-white font-semibold rounded-lg transition-colors border-0'
+                                    style={{
+                                      backgroundColor: '#22c55e',
+                                      color: '#ffffff',
+                                    }}
+                                    onMouseEnter={(e) => {
+                                      e.currentTarget.style.backgroundColor = '#16a34a'
+                                      e.currentTarget.style.color = '#ffffff'
+                                    }}
+                                    onMouseLeave={(e) => {
+                                      e.currentTarget.style.backgroundColor = '#22c55e'
+                                      e.currentTarget.style.color = '#ffffff'
+                                    }}
+                                  >
+                                    اضغط لإرسال نقود
+                                  </a>
+                                  <p className='text-xs text-gray-400 mt-2 text-center'>
+                                    Powered by InstaPay
+                                  </p>
+                                </div>
+                              )}
+                              
+                              {/* Bank Account Details */}
+                              {currentPaymentInfo.accountHolder && (
+                                <div className='mt-3 pt-3 border-t border-gray-700 space-y-2'>
+                                  <p className='text-xs text-gray-400'>للدفع من خارج مصر:</p>
+                                  <p className='text-sm text-gray-300'>
+                                    <span className='font-semibold'>اسم صاحب الحساب:</span> {currentPaymentInfo.accountHolder}
+                                  </p>
+                                  <p className='text-sm text-gray-300'>
+                                    <span className='font-semibold'>IBAN:</span> {currentPaymentInfo.iban}
+                                  </p>
+                                  <p className='text-sm text-gray-300'>
+                                    <span className='font-semibold'>Swift Code:</span> {currentPaymentInfo.swift}
+                                  </p>
+                                </div>
+                              )}
+                              
+                              {!currentPaymentInfo.link && !currentPaymentInfo.accountHolder && (
+                                <p className='text-xs text-gray-400 mt-2'>
+                                  قم بتحويل المبلغ إلى الرقم أعلاه، ثم أدخل رقمك وارفع صورة المعاملة
+                                </p>
+                              )}
                             </div>
                           </div>
                         )}
@@ -642,7 +814,54 @@ export default function CheckoutForm() {
             )}
           </div>
 
-          {isPaymentDetailsSelected && isPaymentMethodSelected && isEmailSelected && (
+          {/* Step 4: Terms and Conditions */}
+          <div className='border-b'>
+            {!isPaymentDetailsSelected && !isTermsAccepted ? (
+              <div className='flex text-muted-foreground text-base sm:text-lg font-bold my-3 sm:my-4 py-3'>
+                <span className='w-6 sm:w-8'>4 </span>
+                <span>الشروط والأحكام</span>
+              </div>
+            ) : null}
+          </div>
+
+          {isPaymentDetailsSelected && !isTermsAccepted && isPaymentMethodSelected && isEmailSelected && (
+            <div className='mt-4 sm:mt-6'>
+              <Card>
+                <CardContent className='p-3 sm:p-4'>
+                  <div className='flex text-primary text-base sm:text-lg font-bold my-2'>
+                    <span className='w-6 sm:w-8'>4 </span>
+                    <span>الشروط والأحكام</span>
+                  </div>
+                  <div className='mb-3 flex items-start gap-2'>
+                    <Checkbox 
+                      id="terms-desktop" 
+                      checked={termsAccepted}
+                      onCheckedChange={(checked) => setTermsAccepted(checked === true)}
+                    />
+                    <label 
+                      htmlFor="terms-desktop" 
+                      className='text-sm cursor-pointer'
+                    >
+                      أوافق على{' '}
+                      <Link href="/terms" className='text-green-400 hover:underline'>
+                        الشروط والأحكام
+                      </Link>
+                    </label>
+                  </div>
+                  <Button
+                    className='rounded-full w-full btn-mobile'
+                    onClick={handleAcceptTerms}
+                  >
+                    التالي
+                  </Button>
+                  <p className='text-xs text-center py-2 px-2'>
+                    يرجى قراءة والموافقة على الشروط والأحكام
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+          {isPaymentDetailsSelected && isTermsAccepted && isPaymentMethodSelected && isEmailSelected && (
             <div className='mt-4 sm:mt-6'>
               <div className='block lg:hidden'>
                 <CheckoutSummary />

@@ -42,6 +42,7 @@ const productDefaultValues: IProductInput = {
   images: [],
   brand: '',
   description: '',
+  productType: 'game_code',
   price: 0,
   listPrice: 0,
   countInStock: 0,
@@ -194,11 +195,11 @@ const ProductForm = ({
               name='name'
               render={({ field }) => (
                 <FormItem className='w-full'>
-                  <FormLabel className='text-gray-900 font-semibold'>اسم المنتج</FormLabel>
+                  <FormLabel className='text-white font-semibold'>اسم المنتج</FormLabel>
                   <FormControl>
                     <Input 
                       {...field} 
-                      className='border-gray-300 bg-white text-gray-900 focus:border-green-500 focus:ring-blue-500'
+                      className='border-gray-700 bg-gray-800 text-gray-200 focus:border-green-500 focus:ring-blue-500'
                       onChange={(e) => {
                         field.onChange(e)
                         if (type === 'Create') {
@@ -219,16 +220,16 @@ const ProductForm = ({
               name='slug'
               render={({ field }) => (
                 <FormItem className='w-full'>
-                  <FormLabel className='text-gray-900 font-semibold'>الرابط</FormLabel>
+                  <FormLabel className='text-white font-semibold'>الرابط</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      className='border-gray-300 bg-gray-50 text-gray-600 focus:border-green-500 focus:ring-blue-500'
+                      className='border-gray-700 bg-gray-900 text-gray-300 focus:border-green-500 focus:ring-blue-500'
                       readOnly
                       placeholder='سيتم توليد الرابط تلقائياً من اسم المنتج'
                     />
                   </FormControl>
-                  <p className='text-xs text-gray-500'>
+                  <p className='text-xs text-gray-400'>
                     سيتم إنشاء الرابط تلقائياً من اسم المنتج
                   </p>
                   <FormMessage />
@@ -243,10 +244,10 @@ const ProductForm = ({
               name='category'
               render={({ field }) => (
                 <FormItem className='w-full'>
-                  <FormLabel className='text-gray-900 font-semibold'>الفئة</FormLabel>
+                  <FormLabel className='text-white font-semibold'>الفئة</FormLabel>
                   <FormControl>
                     <Select onValueChange={field.onChange} value={field.value} disabled={isLoadingCategories}>
-                      <SelectTrigger className='border-gray-300 bg-white text-gray-900 focus:border-green-500 focus:ring-blue-500'>
+                      <SelectTrigger className='border-gray-700 bg-gray-800 text-gray-200 focus:border-green-500 focus:ring-blue-500'>
                         <SelectValue placeholder={isLoadingCategories ? "جاري التحميل..." : "اختر فئة"} />
                       </SelectTrigger>
                       <SelectContent>
@@ -269,6 +270,29 @@ const ProductForm = ({
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name='productType'
+              render={({ field }) => (
+                <FormItem className='w-full'>
+                  <FormLabel className='text-white font-semibold'>نوع المنتج</FormLabel>
+                  <FormControl>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger className='border-gray-700 bg-gray-800 text-gray-200 focus:border-green-500 focus:ring-blue-500'>
+                        <SelectValue placeholder="اختر نوع المنتج" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="game_code">كود اللعبة</SelectItem>
+                        <SelectItem value="game_account">حساب اللعبة</SelectItem>
+                        <SelectItem value="subscription">اشتراك</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
           <div className='flex flex-col gap-5 md:flex-row'>
             <FormField
@@ -276,11 +300,11 @@ const ProductForm = ({
               name='brand'
               render={({ field }) => (
                 <FormItem className='w-full'>
-                  <FormLabel className='text-gray-900 font-semibold'>العلامة التجارية</FormLabel>
+                  <FormLabel className='text-white font-semibold'>العلامة التجارية</FormLabel>
                   <FormControl>
                     <Input 
                       {...field} 
-                      className='border-gray-300 bg-white text-gray-900 focus:border-green-500 focus:ring-blue-500'
+                      className='border-gray-700 bg-gray-800 text-gray-200 focus:border-green-500 focus:ring-blue-500'
                     />
                   </FormControl>
 
@@ -294,11 +318,11 @@ const ProductForm = ({
               name='listPrice'
               render={({ field }) => (
                 <FormItem className='w-full'>
-                  <FormLabel className='text-gray-900 font-semibold'>السعر الأصلي</FormLabel>
+                  <FormLabel className='text-white font-semibold'>السعر الأصلي</FormLabel>
                   <FormControl>
                     <Input 
                       {...field} 
-                      className='border-gray-300 bg-white text-gray-900 focus:border-green-500 focus:ring-blue-500'
+                      className='border-gray-700 bg-gray-800 text-gray-200 focus:border-green-500 focus:ring-blue-500'
                     />
                   </FormControl>
                   <FormMessage />
@@ -312,11 +336,11 @@ const ProductForm = ({
               name='price'
               render={({ field }) => (
                 <FormItem className='w-full'>
-                  <FormLabel className='text-gray-900 font-semibold'>السعر الصافي</FormLabel>
+                  <FormLabel className='text-white font-semibold'>السعر الصافي</FormLabel>
                   <FormControl>
                     <Input 
                       {...field} 
-                      className='border-gray-300 bg-white text-gray-900 focus:border-green-500 focus:ring-blue-500'
+                      className='border-gray-700 bg-gray-800 text-gray-200 focus:border-green-500 focus:ring-blue-500'
                     />
                   </FormControl>
                   <FormMessage />
@@ -328,12 +352,12 @@ const ProductForm = ({
               name='countInStock'
               render={({ field }) => (
                 <FormItem className='w-full'>
-                  <FormLabel className='text-gray-900 font-semibold'>الكمية المتوفرة</FormLabel>
+                  <FormLabel className='text-white font-semibold'>الكمية المتوفرة</FormLabel>
                   <FormControl>
                     <Input
                       type='number'
                       {...field}
-                      className='border-gray-300 bg-white text-gray-900 focus:border-green-500 focus:ring-blue-500'
+                      className='border-gray-700 bg-gray-800 text-gray-200 focus:border-green-500 focus:ring-blue-500'
                     />
                   </FormControl>
                   <FormMessage />
@@ -348,11 +372,11 @@ const ProductForm = ({
               name='images'
               render={() => (
                 <FormItem className='w-full'>
-                  <FormLabel className='text-gray-900 font-semibold'>الصور</FormLabel>
+                  <FormLabel className='text-white font-semibold'>الصور</FormLabel>
                   <Card>
                     <CardContent className='space-y-2 mt-2 min-h-48'>
                       {images.length === 0 ? (
-                        <div className='flex items-center justify-center h-32 text-gray-500'>
+                        <div className='flex items-center justify-center h-32 text-gray-400'>
                           لم يتم رفع أي صور بعد
                         </div>
                       ) : (
@@ -395,7 +419,7 @@ const ProductForm = ({
                                   height={100}
                                 />
                               ) : (
-                                <div className='w-full h-24 bg-gray-200 rounded-sm border flex items-center justify-center text-gray-500 text-xs'>
+                                <div className='w-full h-24 bg-gray-700 rounded-sm border flex items-center justify-center text-gray-400 text-xs'>
                                   صورة فارغة
                                 </div>
                               )}
@@ -417,7 +441,7 @@ const ProductForm = ({
                         </div>
                       )}
                       <div className='flex flex-col items-center pt-4 space-y-2'>
-                        <p className='text-sm text-gray-600 text-center'>
+                        <p className='text-sm text-gray-400 text-center'>
                           {images.length === 0 
                             ? 'ارفع أول صورة للمنتج' 
                             : 'اسحب وأفلت لإعادة ترتيب الصور • انقر على × للحذف'
@@ -453,10 +477,10 @@ const ProductForm = ({
               name='description'
               render={({ field }) => (
                 <FormItem className='w-full'>
-                  <FormLabel className='text-gray-900 font-semibold'>الوصف</FormLabel>
+                  <FormLabel className='text-white font-semibold'>الوصف</FormLabel>
                   <FormControl>
                     <Textarea
-                      className='resize-none border-gray-300 bg-white text-gray-900 focus:border-green-500 focus:ring-blue-500'
+                      className='resize-none border-gray-700 bg-gray-800 text-gray-200 focus:border-green-500 focus:ring-blue-500'
                       {...field}
                     />
                   </FormControl>
@@ -477,7 +501,7 @@ const ProductForm = ({
                       onCheckedChange={field.onChange}
                     />
                   </FormControl>
-                  <FormLabel className='text-gray-900 font-semibold'>منشور؟</FormLabel>
+                  <FormLabel className='text-white font-semibold'>منشور؟</FormLabel>
                 </FormItem>
               )}
             />
@@ -496,7 +520,7 @@ const ProductForm = ({
           {isSubmitting ? 'جاري الإرسال...' : `${type === 'Create' ? 'إنشاء' : 'تحديث'} المنتج`}
         </Button>
         {isSubmitting && (
-          <p className='text-sm text-gray-600 text-center'>
+          <p className='text-sm text-gray-400 text-center'>
             {type === 'Update' ? 'جاري تحديث المنتج...' : 'جاري إنشاء المنتج...'}
           </p>
         )}

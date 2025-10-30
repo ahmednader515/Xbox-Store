@@ -154,6 +154,10 @@ export const createOrderFromCart = async (
           price: item.price,
           size: item.size,
           color: item.color,
+          productType: (item as any).productType,
+          isAddToOwnAccount: (item as any).isAddToOwnAccount ?? false,
+          accountUsername: (item as any).accountUsername,
+          accountPassword: (item as any).accountPassword,
         }))
       },
       shippingAddress: orderData.shippingAddress ? {

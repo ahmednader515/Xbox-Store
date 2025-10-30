@@ -52,6 +52,11 @@ export default function AddToCart({ product, className }: AddToCartProps) {
           color: selectedVariant || product.colors[0] || '',
           size: product.sizes[0] || '',
           quantity: 1,
+          // product type & game account fields
+          productType: (product as any).productType || 'game_code',
+          isAddToOwnAccount: false,
+          accountUsername: undefined,
+          accountPassword: undefined,
           clientId: `${product.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         }, quantity)
 

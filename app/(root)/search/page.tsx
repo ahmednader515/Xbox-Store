@@ -136,10 +136,13 @@ async function ProductResults({ params, translations }: {
     }
   }
   
-  if (minPrice && maxPrice) {
-    where.price = { 
-      gte: parseFloat(minPrice), 
-      lte: parseFloat(maxPrice) 
+  if (minPrice || maxPrice) {
+    where.price = { }
+    if (minPrice) {
+      where.price.gte = parseFloat(minPrice)
+    }
+    if (maxPrice) {
+      where.price.lte = parseFloat(maxPrice)
     }
   }
 

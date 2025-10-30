@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
+import { useEffect } from 'react'
 
 import { z } from 'zod'
 
@@ -60,6 +61,49 @@ const WebPageForm = ({
   })
 
   const { toast } = useToast()
+
+  // Apply dark theme to markdown editor
+  useEffect(() => {
+    const style = document.createElement('style')
+    style.textContent = `
+      .rc-md-editor {
+        background-color: #1f2937 !important;
+        color: #f3f4f6 !important;
+        border-color: #374151 !important;
+      }
+      .rc-md-editor .rc-md-navigation {
+        background-color: #374151 !important;
+        border-bottom-color: #4b5563 !important;
+      }
+      .rc-md-editor .rc-md-navigation .button-wrap {
+        color: #f3f4f6 !important;
+      }
+      .rc-md-editor .rc-md-navigation .button-wrap:hover {
+        background-color: #4b5563 !important;
+      }
+      .rc-md-editor .editor-container .section-container {
+        background-color: #1f2937 !important;
+        color: #f3f4f6 !important;
+      }
+      .rc-md-editor .editor-container textarea {
+        background-color: #1f2937 !important;
+        color: #f3f4f6 !important;
+      }
+      .rc-md-editor .custom-html-style {
+        background-color: #374151 !important;
+        color: #f3f4f6 !important;
+      }
+      .rc-md-editor .split-view .section-container {
+        background-color: #1f2937 !important;
+        border-color: #374151 !important;
+      }
+    `
+    document.head.appendChild(style)
+
+    return () => {
+      document.head.removeChild(style)
+    }
+  }, [])
 
   async function onSubmit(values: z.infer<typeof WebPageInputSchema>) {
     if (type === 'Create') {
@@ -135,7 +179,7 @@ const WebPageForm = ({
                 <FormControl>
                   <Input
                     placeholder='سيتم توليد الرابط تلقائياً من العنوان'
-                    className='text-right bg-gray-50'
+                    className='text-right bg-gray-800 text-gray-200 border-gray-700'
                     readOnly
                     {...field}
                   />

@@ -67,10 +67,10 @@ export default async function Header() {
               >
                 <Image
                   src={site.logo}
-                  width={60}
-                  height={60}
+                  width={80}
+                  height={80}
                   alt={`${site.name} logo`}
-                  className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16"
+                  className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24"
                 />
               </Link>
             </div>

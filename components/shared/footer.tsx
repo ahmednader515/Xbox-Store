@@ -52,6 +52,11 @@ export default function Footer() {
                   معلومات التوصيل
                 </Link>
               </li>
+              <li>
+                <Link href="/faq" className="text-gray-300 hover:text-white transition-colors duration-200">
+                  الأسئلة الشائعة
+                </Link>
+              </li>
 
             </ul>
           </div>

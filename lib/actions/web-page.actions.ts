@@ -79,7 +79,7 @@ export async function getWebPageById(webPageId: string) {
   return JSON.parse(JSON.stringify(webPage))
 }
 
-// GET ONE PAGE BY SLUG
+// GET ONE PAGE BY SLUG (for public viewing)
 export async function getWebPageBySlug(slug: string) {
   try {
     const webPage = await prisma.webPage.findFirst({
@@ -89,6 +89,20 @@ export async function getWebPageBySlug(slug: string) {
     return JSON.parse(JSON.stringify(webPage))
   } catch (error) {
     console.warn('Database error in getWebPageBySlug:', error)
+    return null
+  }
+}
+
+// GET ONE PAGE BY SLUG (for admin editing - includes unpublished)
+export async function getWebPageBySlugForEdit(slug: string) {
+  try {
+    const webPage = await prisma.webPage.findFirst({
+      where: { slug }
+    })
+    if (!webPage) return null
+    return JSON.parse(JSON.stringify(webPage))
+  } catch (error) {
+    console.warn('Database error in getWebPageBySlugForEdit:', error)
     return null
   }
 }

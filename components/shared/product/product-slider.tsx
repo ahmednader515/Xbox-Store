@@ -21,23 +21,46 @@ export default function ProductSlider({
   products: (IProductInput & { id: string })[]
   hideDetails?: boolean
 }) {
-  const [isMobile, setIsMobile] = React.useState(false)
+  const [swiperInstance, setSwiperInstance] = React.useState<any>(null)
+  const [isBeginning, setIsBeginning] = React.useState(true)
+  const [isEnd, setIsEnd] = React.useState(true)
   const navigationPrevRef = React.useRef(null)
   const navigationNextRef = React.useRef(null)
 
   React.useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
+    if (swiperInstance && navigationPrevRef.current && navigationNextRef.current) {
+      swiperInstance.params.navigation.prevEl = navigationPrevRef.current
+      swiperInstance.params.navigation.nextEl = navigationNextRef.current
+      swiperInstance.navigation.init()
+      swiperInstance.navigation.update()
     }
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
+  }, [swiperInstance])
 
   const slidesPerView = hideDetails ? 6 : 5
 
+  React.useEffect(() => {
+    if (swiperInstance) {
+      setIsBeginning(swiperInstance.isBeginning)
+      setIsEnd(swiperInstance.isEnd)
+    }
+  }, [swiperInstance])
+
+  const handleSlideChange = (swiper: any) => {
+    setIsBeginning(swiper.isBeginning)
+    setIsEnd(swiper.isEnd)
+  }
+
+  React.useEffect(() => {
+    if (swiperInstance) {
+      swiperInstance.on('slideChange', handleSlideChange)
+      return () => {
+        swiperInstance.off('slideChange', handleSlideChange)
+      }
+    }
+  }, [swiperInstance])
+
   return (
-    <div className='w-full bg-gray-900 font-cairo rounded-xl p-4 sm:p-6 overflow-visible' dir="rtl">
+    <div className='w-full font-cairo rounded-xl p-4 sm:p-6 overflow-visible' dir="rtl">
       {title && (
         <h2 className='text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-right text-white'>{title}</h2>
       )}
@@ -47,6 +70,8 @@ export default function ProductSlider({
           modules={[Navigation, Pagination, Autoplay]}
           spaceBetween={16}
           slidesPerView={1}
+          onSwiper={setSwiperInstance}
+          onSlideChange={handleSlideChange}
           navigation={{
             prevEl: navigationPrevRef.current,
             nextEl: navigationNextRef.current,
@@ -102,16 +127,26 @@ export default function ProductSlider({
         {/* Custom Navigation Buttons */}
         <button
           ref={navigationNextRef}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-gray-800/90 hover:bg-green-600 text-white rounded-full p-2 sm:p-3 shadow-lg transition-all duration-200 hover:scale-110 border-2 border-gray-700 hover:border-green-500"
+          className={`absolute -left-10 top-1/2 -translate-y-1/2 z-10 rounded-full p-2 sm:p-3 shadow-lg transition-all duration-200 border-2 ${
+            isEnd 
+              ? 'bg-gray-800/50 text-gray-400 border-gray-700 cursor-not-allowed' 
+              : 'bg-gray-800/90 hover:bg-green-600 text-white hover:scale-110 border-gray-700 hover:border-green-500 cursor-pointer'
+          }`}
           aria-label="Next slide"
+          disabled={isEnd}
         >
           <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
         </button>
         
         <button
           ref={navigationPrevRef}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-gray-800/90 hover:bg-green-600 text-white rounded-full p-2 sm:p-3 shadow-lg transition-all duration-200 hover:scale-110 border-2 border-gray-700 hover:border-green-500"
+          className={`absolute -right-10 top-1/2 -translate-y-1/2 z-10 rounded-full p-2 sm:p-3 shadow-lg transition-all duration-200 border-2 ${
+            isBeginning 
+              ? 'bg-gray-800/50 text-gray-400 border-gray-700 cursor-not-allowed' 
+              : 'bg-gray-800/90 hover:bg-green-600 text-white hover:scale-110 border-gray-700 hover:border-green-500 cursor-pointer'
+          }`}
           aria-label="Previous slide"
+          disabled={isBeginning}
         >
           <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
         </button>

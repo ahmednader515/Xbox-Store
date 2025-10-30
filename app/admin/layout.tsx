@@ -10,10 +10,11 @@ import DesktopNav from './desktop-nav'
 const allNavigation = [
   { name: 'نظرة عامة', href: '/admin/overview', roles: ['Admin'] },
   { name: 'المنتجات', href: '/admin/products', roles: ['Admin', 'Moderator'] },
-  { name: 'الطلبات', href: '/admin/orders', roles: ['Admin', 'Moderator'] },
+  { name: 'الطلبات', href: '/admin/orders', roles: ['Admin'] },
   { name: 'المستخدمون', href: '/admin/users', roles: ['Admin'] },
   { name: 'أكواد الخصم', href: '/admin/promo-codes', roles: ['Admin'] },
   { name: 'صفحات الويب', href: '/admin/web-pages', roles: ['Admin', 'Moderator'] },
+  { name: 'الأسئلة الشائعة', href: '/admin/faq', roles: ['Admin', 'Moderator'] },
   { name: 'الإعدادات', href: '/admin/settings', roles: ['Admin', 'Moderator'] },
 ]
 

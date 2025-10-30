@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import React from 'react'
 
 import { auth } from '@/auth'
@@ -24,6 +24,11 @@ const AdminOrderDetailsPage = async (props: {
 
   const session = await auth()
   const userRole = session?.user?.role
+
+  // Only Admin can access order details
+  if (userRole !== 'Admin') {
+    redirect('/')
+  }
 
   return (
     <main className='max-w-6xl mx-auto p-4'>

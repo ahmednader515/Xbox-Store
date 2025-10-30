@@ -52,6 +52,7 @@ model Product {
   images             String[]
   brand              String
   description        String
+  productType        String      @default("game_code") // game_account, subscription, game_code
   price              Decimal     @db.Decimal(10, 2)
   listPrice          Decimal     @db.Decimal(10, 2)
   countInStock       Int
@@ -134,23 +135,27 @@ model Order {
 }
 
 model OrderItem {
-  id           String   @id @default(cuid())
-  orderId      String
-  productId    String
-  clientId     String
-  name         String
-  slug         String
-  category     String
-  quantity     Int
-  countInStock Int
-  image        String
-  price        Decimal  @db.Decimal(10, 2)
-  size         String?
-  color        String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  id                String   @id @default(cuid())
+  orderId           String
+  productId         String
+  clientId          String
+  name              String
+  slug              String
+  category          String
+  quantity          Int
+  countInStock      Int
+  image             String
+  price             Decimal  @db.Decimal(10, 2)
+  size              String?
+  color             String?
+  productType       String?  // game_account, subscription, game_code
+  isAddToOwnAccount Boolean  @default(false)
+  accountUsername   String?
+  accountPassword   String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  order             Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product           Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@map("order_items")
 }
@@ -215,4 +220,31 @@ model PromoCode {
   updatedAt       DateTime @updatedAt
 
   @@map("promo_codes")
+}
+
+model FAQCategory {
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  questions FAQQuestion[]
+
+  @@map("faq_categories")
+}
+
+model FAQQuestion {
+  id          String       @id @default(cuid())
+  categoryId  String
+  question    String
+  answer      String
+  sortOrder   Int          @default(0)
+  isActive    Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  category    FAQCategory  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@map("faq_questions")
 }

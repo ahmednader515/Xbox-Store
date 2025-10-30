@@ -92,6 +92,7 @@ export async function createProduct(data: IProductInput) {
         images: productData.images,
         brand: productData.brand,
         description: productData.description,
+        productType: product.productType || 'game_code',
         price: product.price,
         listPrice: productData.listPrice,
         countInStock: productData.countInStock,
@@ -144,6 +145,7 @@ export async function updateProduct(data: z.infer<typeof ProductUpdateSchema>) {
         images: productData.images,
         brand: productData.brand,
         description: productData.description,
+        productType: product.productType || 'game_code',
         price: product.price,
         listPrice: productData.listPrice,
         countInStock: productData.countInStock,
@@ -625,6 +627,7 @@ export async function getHomePageData() {
         orderBy: { createdAt: 'desc' },
         take: 4,
         select: {
+          id: true,
           name: true,
           slug: true,
           images: true,
@@ -632,6 +635,10 @@ export async function getHomePageData() {
           listPrice: true,
           avgRating: true,
           numReviews: true,
+          productType: true,
+          category: true,
+          countInStock: true,
+          brand: true,
         }
       })
 
@@ -643,6 +650,7 @@ export async function getHomePageData() {
         orderBy: { createdAt: 'desc' },
         take: 4,
         select: {
+          id: true,
           name: true,
           slug: true,
           images: true,
@@ -650,6 +658,10 @@ export async function getHomePageData() {
           listPrice: true,
           avgRating: true,
           numReviews: true,
+          productType: true,
+          category: true,
+          countInStock: true,
+          brand: true,
         }
       })
 
@@ -661,6 +673,7 @@ export async function getHomePageData() {
         orderBy: { createdAt: 'desc' },
         take: 4,
         select: {
+          id: true,
           name: true,
           slug: true,
           images: true,
@@ -668,6 +681,10 @@ export async function getHomePageData() {
           listPrice: true,
           avgRating: true,
           numReviews: true,
+          productType: true,
+          category: true,
+          countInStock: true,
+          brand: true,
         }
       })
       
@@ -676,6 +693,7 @@ export async function getHomePageData() {
       
       // Process product data for cards
       const processProductForCard = (product: any) => ({
+        id: product.id,
         name: product.name,
         slug: product.slug,
         image: Array.isArray(product.images) && product.images.length > 0 ? product.images[0] : '',
@@ -684,6 +702,10 @@ export async function getHomePageData() {
         listPrice: Number(product.listPrice),
         avgRating: Number(product.avgRating),
         numReviews: Number(product.numReviews),
+        productType: product.productType || 'game_code',
+        category: product.category,
+        countInStock: product.countInStock,
+        brand: product.brand,
       })
       
       const processedNewArrivals = newArrivals.map(processProductForCard)
